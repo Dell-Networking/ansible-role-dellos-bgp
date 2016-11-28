@@ -67,7 +67,7 @@ dellos_bgp:
         state: present
     peer_group:
       - name: per
-        asn: 13
+        asn: 12
         state: present
       - name: peer1
         asn: 14

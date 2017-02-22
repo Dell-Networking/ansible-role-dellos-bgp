@@ -215,7 +215,7 @@ router bgp {{ bgp_vars.asn }}
           {% endif %}
         {% endif %}
         {% if tag_or_ip is defined and tag_or_ip %}
-          {% if neighbor.state is defined and not neighbor.state == "absent" %}
+          {% if (neighbor.state is not defined) or (neighbor.state is defined and not neighbor.state == "absent") %}
             {% if neighbor.timer is defined %}
               {% if neighbor.timer %}
  neighbor {{ tag_or_ip }} timers {{ neighbor.timer }}
@@ -237,7 +237,7 @@ router bgp {{ bgp_vars.asn }}
  no neighbor {{ tag_or_ip }} sender-side-loop-detection
               {% endif %}
             {% endif %}
-            {% if neighbor.src_loopback is defined and neighbor.src_loopback %}
+            {% if neighbor.src_loopback is defined and neighbor.src_loopback|int(-1) != -1 %}
               {% if neighbor.src_loopback_state is defined and neighbor.src_loopback_state == "absent" %}
  no neighbor {{ tag_or_ip }} update-source Loopback {{neighbor.src_loopback }}
               {% else %}

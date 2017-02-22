@@ -122,7 +122,7 @@ neighbor {{ tag_or_ip }} ebgp-multihop {{ neighbor.ebgp_multihop }}
 no neighbor {{ tag_or_ip }} ebgp-multihop
                   {% endif %}
                 {% endif %}
-                {% if neighbor.src_loopback is defined and neighbor.src_loopback %}
+                {% if neighbor.src_loopback is defined and neighbor.src_loopback|int(-1) != -1 %}
                   {% if neighbor.src_loopback_state is defined and neighbor.src_loopback_state == "absent" %}
 no neighbor {{ tag_or_ip }} update-source
                   {% else %}
@@ -159,7 +159,6 @@ no bgp listen range {{ neighbor.subnet }}
 bgp listen range {{ neighbor.subnet }} inherit peer {{ tag_or_ip }}
                 {% endif %}
               {% endif %}
-
 template peer {{ tag_or_ip }}
               {% if neighbor.remote_asn is defined and neighbor.remote_asn %}
                 {% if neighbor.remote_asn_state is defined and neighbor.remote_asn_state == "absent" %}
@@ -182,7 +181,7 @@ ebgp-multihop {{ neighbor.ebgp_multihop }}
 no ebgp-multihop
                 {% endif %}
               {% endif %}
-              {% if neighbor.src_loopback is defined and neighbor.src_loopback %}
+              {% if neighbor.src_loopback is defined and neighbor.src_loopback|int(-1) != -1 %}
                 {% if neighbor.src_loopback_state is defined and neighbor.src_loopback_state == "absent" %}
 no update-source
                 {% else %}
@@ -212,8 +211,6 @@ exit
       {% endif %}
     {% endfor %}
   {% endif %}
-
-
   {% if bgp_vars.ipv6_network is defined and bgp_vars.ipv6_network %}
     {% for net in bgp_vars.ipv6_network %}
       {% if net.address is defined and net.address %}

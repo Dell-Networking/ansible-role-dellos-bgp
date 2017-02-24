@@ -47,7 +47,7 @@ The variables and its values are case-sensitive.
 | ipv6_network | list | Configures IPv6 BGP network. See the following ipv6_network.* keys for each list item. |
 | ipv6_network.address | string (required)         | Configures the IPv6 address of the BGP network. The value should in the format 2001:4898:5808:ffa2::1/126  |
 |    ipv6_network.state | string, choices: absent, present* | If set to absent, deletes the IPV6 BGP network.                                                                                                                                 |
-| neighbor | list | Configures IPv4 BGP neighbors. See the following ipv4_neighbor.* keys for each list item. |
+| neighbor | list | Configures IPv4 BGP neighbors. See the following neighbor.* keys for each list item. |
 | neighbor.ip | string (required)         | Configures the IPv4 address of the BGP neighbor. The value must be in the form of 10.1.1.1  |
 | neighbor.name | string (required)         | Configures the BGP peer group with this name. This key is supported only when the neighbor is a peer group. This key is mutually exclusive with the key neighbor.ip. |
 | neighbor.type | string (required), choices: ipv4,ipv6,peergroup       | Specifies the type of the BGP neighbor.  |
@@ -64,7 +64,7 @@ The variables and its values are case-sensitive.
 |    distribute_list.out_state | string, choices: absent, present* | If set to absent, deletes the filter at outgoing packets.            |
 | neighbor.admin | string, choices: up,down       | Configures the administrative state of the neighbor.  |
 | neighbor.sender_loop_detect | boolean: true, false         | Enable/Disable the sender side loop detect for neighbor. This key is not supported in OS6. |
-| neighbor.src_loopback | string         | Configures the source loopback interface for the routing packets. This key is not supported in OS10. |
+| neighbor.src_loopback | integer         | Configures the source loopback interface for the routing packets. This key is not supported in OS10. |
 | neighbor.src_loopback_state | string, choices: absent, present* | If set to absent, deletes the source for routing packets.                   |
 | neighbor.ebgp_multihop | integer, default=255 | Configures maximum hop count value allowed in EBGP neighbors that are not directly connected.                                                                                       |
 | neighbor.passive | boolean: true, false*     | Configures the passive BGP peer group. This key is supported only when neighbor is a peer group. This key is supported only in OS9.                             |

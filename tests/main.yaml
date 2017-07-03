@@ -1,7 +1,8 @@
 ---
 # vars file for Dell-Networking.dellos-bgp, below gives a sample configuration
-dellos_bgp:
-  spine2:
+
+# Sample variables for dellos10 device
+  dellos_bgp:
     asn: 12
     maxpath_ibgp: 2
     best_path:
@@ -49,7 +50,10 @@ dellos_bgp:
       - route_type: static
         state: present
         address_type: ipv4
-  leaf4:
+    state: absent
+
+# Sample variables for dellos6 device
+  dellos_bgp:
     asn: 11
     router_id: 1.1.1.1
     maxpath_ibgp: 2
@@ -91,7 +95,8 @@ dellos_bgp:
         state: present
     state: present
 
-  leaf3:
+# Sample variables for dellos9 device
+  dellos_bgp:
     asn: 11
     router_id: 192.168.3.100
     maxpath_ibgp: 2

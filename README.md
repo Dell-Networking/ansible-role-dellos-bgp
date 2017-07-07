@@ -32,6 +32,7 @@ The variables and its values are case-sensitive.
 | asn | string(required) | Configures the autonomous system number of the local BGP instance. |
 | router_id | string | Configures IP address of the local BGP router instance. |
 | graceful_restart | boolean | Configures graceful restart capability. |
+| graceful_restart.state | string, choices: absent, present* | If set to absent, removes graceful restart capability   |
 | maxpath_ibgp | integer, default=1 | Configures maximum number of paths to forward packets through iBGP. The range is from 1 to 64. |
 | maxpath_ebgp | integer, default=1 | Configures maximum number of paths to forward packets through eBGP. The range is from 1 to 64. |
 | best_path | list | Configures default Best path selection. See the following best_path.* keys for each list item. This key is not supported in dellos6. |

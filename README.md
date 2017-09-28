@@ -1,5 +1,5 @@
 # BGP Role for Dell EMC Networking OS
-This role facilitates the configuration of Border Gateway Protocol (BGP) attributes. It supports the configuration of router ID, networks, neighbors, and maximum path. This role is abstracted for dellos9, dellos6 and dellos10 devices.
+This role facilitates the configuration of border gateway protocol (BGP) attributes. It supports the configuration of router ID, networks, neighbors, and maximum path. This role is abstracted for dellos9, dellos6 and dellos10 devices.
 
 ## Installation
 

@@ -18,7 +18,7 @@ dellos_bgp:
           state: present
     ipv4_network:
        - address: 101.1.1.0/30
-         delete: False
+         state: present
     ipv6_network:
       - address: "2001:4898:5808:ffa0::/126"
         state: present

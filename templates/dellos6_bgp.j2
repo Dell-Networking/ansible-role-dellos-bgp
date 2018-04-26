@@ -21,14 +21,14 @@ dellos_bgp:
         remote_asn: 64818
         timer: 2 5
         default_originate: True
-        peer_group: MUX_HNV_ACCESS
+        peergroup: MUX_HNV_ACCESS
         state: present
       - type: ipv6
         ip: 2001:4898:5808:ffa2::1
         timer: 2 4
         default_originate: True
         remote_asn: 64818
-        peer_group: MUX_HNV_ACCESS
+        peergroup: MUX_HNV_ACCESS
         state: present
       - type: peergroup
         name: MUX_HNV_ACCESS
@@ -92,7 +92,7 @@ network {{ ip_and_mask[0] }} mask {{ ip_and_mask[1] }}
             {% set tag_or_ip = neighbor.ip %}
             {% if neighbor.remote_asn is defined and neighbor.remote_asn %}
               {% if neighbor.state is defined and neighbor.state == "absent" %}
-no neighbor {{ tag_or_ip }} remote-as {{ neighbor.remote_asn }}
+no neighbor {{ tag_or_ip }} remote-as
                 {% if neighbor.peergroup is defined and neighbor.peergroup %}
                   {% if neighbor.peergroup_state is defined and neighbor.peergroup_state == "absent" %}
 no neighbor {{ tag_or_ip }} inherit peer {{ neighbor.peergroup }}

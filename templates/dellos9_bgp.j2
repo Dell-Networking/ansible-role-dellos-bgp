@@ -305,25 +305,25 @@ router bgp {{ bgp_vars.asn }}
           {% if route.address_type == "ipv6" %}
  address-family {{ route.address_type }} unicast
             {% if route.state is defined and route.state == "absent" %}
- no redistribute {{ route.route_type }}
+  no redistribute {{ route.route_type }}
             {% else %}
               {% if route.route_map is defined %}
                 {% if route.route_map == "present" %}
                   {% if route.route_map_name is defined and route.route_map_name %}
- redistribute {{ route.route_type }} route-map {{ route.route_map_name }}
+  redistribute {{ route.route_type }} route-map {{ route.route_map_name }}
                   {% else %}
- redistribute {{ route.route_type }}
+  redistribute {{ route.route_type }}
                   {% endif %} 
                 {% else %}
                   {% if route.route_map_name is defined and route.route_map_name %}
- no redistribute {{ route.route_type }} route-map {{ route.route_map_name }}
+  no redistribute {{ route.route_type }} route-map {{ route.route_map_name }}
                   {% endif %}
                 {% endif %}
               {% else %}
- redistribute {{ route.route_type }}
+  redistribute {{ route.route_type }}
               {% endif %}
             {% endif %}
- exit-address-family
+  exit-address-family
           {% else %}
             {% if route.state is defined and route.state == "absent" %}
  no redistribute {{ route.route_type }}

@@ -3,7 +3,7 @@ BGP role
 
 This role facilitates the configuration of border gateway protocol (BGP) attributes. It supports the configuration of router ID, networks, neighbors, and maximum path. This role is abstracted for dellos9, dellos6, and dellos10 devices.
 
-The BGP role requires an SSH connection for connectivity to a Dell EMC Networking device. You can use any of the built-in Dell EMC Networking OS connection variables, or the *provider* dictionary.
+The BGP role requires an SSH connection for connectivity to a Dell EMC Networking device. You can use any of the built-in OS connection variables.
 
 Installation
 ------------
@@ -13,7 +13,7 @@ Installation
 Role variables
 --------------
  
-- Role is abstracted using the *ansible_net_os_name* variable that can take dellos9, dellos6, and dellos10 values
+- Role is abstracted using the *ansible_network_os*/*ansible_net_os_name* variable that can take dellos9, dellos6, and dellos10 values
 - If variable *dellos_cfg_generate* is set to true, it generates the role configuration commands in a file
 - Any role variable with a corresponding state variable setting to absent negates the configuration of that variable
 - Setting an empty value for any variable negates the corresponding configuration
@@ -30,24 +30,24 @@ Role variables
 | ``maxpath_ibgp`` | integer | Configures the maximum number of paths to forward packets through iBGP (1 to 64; default 1) | dellos6, dellos9, dellos10 |
 | ``maxpath_ebgp`` | integer | Configures the maximum number of paths to forward packets through eBGP (1 to 64; default 1) | dellos6, dellos9, dellos10 |
 | ``log_neighbor_changes`` | boolean | Configures log neighbors up/down | dellos10 |
-| ``fast_ext_fallover`` | boolean | Configures reset session if a link to a directly connected external peer goes down.| dellos10. |
-| ``always_compare_med`` | boolean | Configure comparing MED from different neighbors. | dellos10. |
-| ``default_loc_pref`` | integer | Configure default local preference value. | dellos10. |
-| ``confederation`` | dictionary | Configures AS confederation parameters.(see ``confederation.*``) | dellos10. |
-| ``confederation.identifier`` | integer | Configure routing domain confederation AS. | dellos10 |
-| ``confederation.peers`` | string | Configure peer ASs in BGP confederation. | dellos10 |
-| ``confederation.peers_state`` | string, choices: absent, present\* | If set to absent, removes peer ASs in BGP confederation.   | dellos10 |
-| ``route_reflector`` | dictionary | Configures route reflection parameters.(see ``route_reflector.*``) | dellos10. |
-| ``route_reflector.client_to_client`` | boolean | Configure client to client route reflection.| dellos10 |
-| ``route_reflector.cluster_id`` | string | Configure Route-Reflector Cluster-id. | dellos10 |
-| ``address_family_ipv4`` | dictionary | Configures ipv4 address family parameters. (see ``address_family_ipv4.*``) | dellos10. |
-| ``address_family_ipv4.aggregate_addr`` | list | Configures ipv4 BGP aggregate entries. (see ``aggregate_addr.*``) | dellos10 |
-| ``aggregate_addr.ip_and_mask`` | string | Configures ipv4 BGP aggregate address. | dellos10 |
-| ``aggregate_addr.state`` | string, choices: absent, present\* | If set to absent, removes ipv4 BGP aggregate entry.   | dellos10 |
-| ``address_family_ipv4.dampening`` | dictionary | Configures route-flap dampening.(see ``dampening.*``) | dellos10 |
-| ``dampening.value`` | dictionary | Configure the values for dampening. The value should be in format &lt;half-life time&gt; &lt;start value to reuse&gt; &lt;start value to suppress&gt; &lt;max duration&gt;. The default value is 15 750 2000 60. | dellos10 |
-| ``dampening.route_map`` | string | Configure the Route-map to specify criteria for dampening. | dellos10 |
-| ``dampening.state`` | string, choices: absent, present\* | If set to absent, removes dampening.   | dellos10 |
+| ``fast_ext_fallover`` | boolean | Configures a reset session if a link to a directly connected external peer goes down | dellos10 |
+| ``always_compare_med`` | boolean | Configures comparing MED from different neighbors | dellos10 |
+| ``default_loc_pref`` | integer | Configures the default local preference value | dellos10 |
+| ``confederation`` | dictionary | Configures AS confederation parameters (see ``confederation.*``) | dellos10 |
+| ``confederation.identifier`` | integer | Configures routing domain confederation AS | dellos10 |
+| ``confederation.peers`` | string | Configures peer ASs in BGP confederation | dellos10 |
+| ``confederation.peers_state`` | string: absent,present\* | Deletes peer ASs in BGP confederation if set to absent   | dellos10 |
+| ``route_reflector`` | dictionary | Configures route reflection parameters (see ``route_reflector.*``) | dellos10 |
+| ``route_reflector.client_to_client`` | boolean | Configures client-to-client route reflection | dellos10 |
+| ``route_reflector.cluster_id`` | string | Configures the route-reflector cluster-id | dellos10 |
+| ``address_family_ipv4`` | dictionary | Configures IPv4 address family parameters (see ``address_family_ipv4.*``) | dellos10 |
+| ``address_family_ipv4.aggregate_addr`` | list | Configures IPv4 BGP aggregate entries (see ``aggregate_addr.*``) | dellos10 |
+| ``aggregate_addr.ip_and_mask`` | string | Configures the IPv4 BGP aggregate address | dellos10 |
+| ``aggregate_addr.state`` | string: absent,present\* | Deletes an IPv4 BGP aggregate entry if set to absent   | dellos10 |
+| ``address_family_ipv4.dampening`` | dictionary | Configures route-flap dampening (see ``dampening.*``) | dellos10 |
+| ``dampening.value`` | dictionary | Configures dampening values (<half-life time> <start value to reuse> <start value to suppress> <max duration> format; default 15 750 2000 60) | dellos10 |
+| ``dampening.route_map`` | string | Configures the route-map to specify criteria for dampening | dellos10 |
+| ``dampening.state`` | string: absent,present\* | Deletes dampening if set to absent   | dellos10 |
 | ``best_path`` | list | Configures the default best-path selection (see ``best_path.*``) | dellos9, dellos10 |
 | ``best_path.as_path`` | string (required): ignore,multipath-relax     | Configures the AS path used for the best-path computation   | dellos9, dellos10 |
 | ``best_path.as_path_state`` | string: absent,present\*     | Deletes the AS path configuration if set to absent  | dellos9, dellos10 |
@@ -67,22 +67,22 @@ Role variables
 | ``neighbor.type`` | string (required): ipv4,ipv6,peergroup       | Specifies the BGP neighbor type   | dellos6, dellos9, dellos10 |
 | ``neighbor.password`` | string      | Configures the BGP neighbor password  | dellos10  |
 | ``neighbor.route_reflector_client`` | boolean      | Configures router reflector client on the BGP neighbor. | dellos10  |
-| ``neighbor.local_as`` | integer     | Configure local AS for the BGP peer. | dellos10  |
-| ``neighbor.weight`` | integer     | Configure default weight for routes from the neighbor interface. | dellos10  |
+| ``neighbor.local_as`` | integer     | Configures the local AS for the BGP peer | dellos10  |
+| ``neighbor.weight`` | integer     | Configures the default weight for routes from the neighbor interface | dellos10  |
 | ``neighbor.send_community`` | list | Configures the send community attribute to the BGP neighbor (see ``send_community.*``) | dellos10 |
 | ``send_community.type`` | string (required)         | Configures the send community attribute to the BGP neighbor | dellos10 |
 | ``send_community.state`` | string: absent,present\* | Deletes the send community attribute of the BGP neighbor if set to absent | dellos10 |
 | ``neighbor.address_family`` | list | Configures address family commands on the BGP neighbor (see ``address_family.*``)| dellos10 |
 | ``address_family.type`` | string (required): ipv4,ipv6         | Configures IPv4/IPv6 address family command mode on the BGP neighbor  | dellos10 |
 | ``address_family.activate`` | boolean   | Configures activation/deactivation of IPv4/IPv6 address family command mode on the BGP neighbor  | dellos10 |
-| ``address_family.allow_as_in`` | integer  | Configures local AS number in as-path.  | dellos10 |
-| ``address_family.next_hop_self`` | boolean   | Configures disabling the next hop calculation for the neighbor.  | dellos10 |
-| ``address_family.soft_reconf`` | boolean   | Configures per neighbor soft reconfiguration.  | dellos10 |
-| ``address_family.add_path`` | string  | Configures send or receive multiple paths. The value can be 'both &lt;no of paths&gt;' , 'send &lt;no of paths&gt;', 'receive'.| dellos10 |
-| ``address_family.route_map`` | list   | Configures route map on the BGP neighbor. (see ``route_map.*``) | dellos10 |
-| ``route_map.name`` | string  | Configures name of the route map on the BGP neighbor.   | dellos10 |
-| ``route_map.filter`` | string  | Configures filter for routing updates.   | dellos10 |
-| ``route_map.state`` | string, choices: absent,present* | If set to absent deletes the route map of the BGP neighbor. | dellos10 |
+| ``address_family.allow_as_in`` | integer  | Configures the local AS number in the as-path | dellos10 |
+| ``address_family.next_hop_self`` | boolean   | Configures disabling the next-hop calculation for the neighbor | dellos10 |
+| ``address_family.soft_reconf`` | boolean   | Configures per neighbor soft reconfiguration | dellos10 |
+| ``address_family.add_path`` | string  | Configures send or receive multiple paths (value can be 'both <no of paths>', 'send <no of paths>', 'receive')| dellos10 |
+| ``address_family.route_map`` | list   | Configures the route-map on the BGP neighbor (see ``route_map.*``) | dellos10 |
+| ``route_map.name`` | string  | Configures the name of the route-map for the BGP neighbor   | dellos10 |
+| ``route_map.filter`` | string  | Configures the filter for routing updates   | dellos10 |
+| ``route_map.state`` | string, choices: absent,present* | Deletes the route-map of the BGP neighbor if set to absent | dellos10 |
 | ``address_family.state`` | string: absent,present\* | Deletes the address family command mode of the BGP neighbor if set to absent | dellos10 |
 | ``neighbor.remote_asn`` | string (required)         | Configures the remote AS number of the BGP neighbor  | dellos6, dellos9, dellos10 |
 | ``neighbor.remote_asn_state`` | string: absent,present\* | Deletes the remote AS number from the peer group if set to absent; supported only when *neighbor.type* is "peergroup" | dellos6, dellos9, dellos10 |
@@ -105,7 +105,7 @@ Role variables
 | ``neighbor.passive`` | boolean: true,false\*     | Configures the passive BGP peer group; supported only when neighbor is a peer-group | dellos9 |                 
 | ``neighbor.subnet`` | string (required)         | Configures the passive BGP neighbor to this subnet; required together with the *neighbor.passive* key for dellos9 devices | dellos6, dellos9, dellos10 |
 | ``neighbor.subnet_state`` | string: absent,present\* | Deletes the subnet range set for dynamic IPv4 BGP neighbor if set to absent            | dellos6, dellos9, dellos10 |
-| ``neighbor.limit`` | integer    | Configures maximum dynamic peers count. This key is required together with the ``neighbor.subnet`` key. | dellos10.|
+| ``neighbor.limit`` | integer    | Configures maximum dynamic peers count (key is required together with ``neighbor.subnet``) | dellos10 |
 | ``neighbor.state`` | string: absent,present\* | Deletes the IPv4 BGP neighbor if set to absent | dellos6, dellos9, dellos10 |
 | ``redistribute`` | list | Configures the redistribute list to get information from other routing protocols (see ``redistribute.*``) | dellos6, dellos9, dellos10 |
 | ``redistribute.route_type`` | string (required): static,connected        | Configures the name of the routing protocol to redistribute | dellos6, dellos9, dellos10 |
@@ -120,17 +120,18 @@ Role variables
 Connection variables
 --------------------
 
-Ansible Dell EMC Networking roles require connection information to establish communication with the nodes in your inventory. This information can exist in the Ansible *group_vars* or *host_vars* directories, or in the playbook itself.
+Ansible Dell EMC Networking roles require connection information to establish communication with the nodes in your inventory. This information can exist in the Ansible *group_vars* or *host_vars* directories or inventory, or in the playbook itself.
 
 | Key         | Required | Choices    | Description                                         |
 |-------------|----------|------------|-----------------------------------------------------|
-| ``host`` | yes      |            | Specifies the hostname or address for connecting to the remote device over the specified transport. |
-| ``port`` | no       |            | Specifies the port used to build the connection to the remote device; if value is unspecified it defaults to 22 |
-| ``username`` | no       |            | Specifies the username that authenticates the CLI login for connection to the remote device; if value is unspecified, the ANSIBLE_NET_USERNAME environment variable value is used |
-| ``password`` | no       |            | Specifies the password that authenticates the connection to the remote device; if value is unspecified, the ANSIBLE_NET_PASSWORD environment variable value is used |
-| ``authorize`` | no       | yes, no\*   | Instructs the module to enter privileged mode on the remote device before sending any commands; if value is unspecified, the ANSIBLE_NET_AUTHORIZE environment variable value is used and the device attempts to execute all commands in non-privileged mode . This key is supported only in dellos9 and dellos6. |
-| ``auth_pass`` | no       |            | Specifies the password to use if required to enter privileged mode on the remote device; if key is set to no, this argument not applicable; if value is unspecified, the ANSIBLE_NET_AUTH_PASS environment variable value is used . This key is supported only in dellos9 and dellos6. |
-| ``provider`` | no       |            | Passes all connection arguments as a dictonary object; all constraints (such as required or choices) must be met either by individual arguments or values in this dictionary |
+| ``ansible_host`` | yes      |            | Specifies the hostname or address for connecting to the remote device over the specified transport |
+| ``ansible_port`` | no       |            | Specifies the port used to build the connection to the remote device; if value is unspecified, the ANSIBLE_REMOTE_PORT option is used; it defaults to 22 |
+| ``ansible_ssh_user`` | no       |            | Specifies the username that authenticates the CLI login for the connection to the remote device; if value is unspecified, the ANSIBLE_REMOTE_USER environment variable value is used  |
+| ``ansible_ssh_pass`` | no       |            | Specifies the password that authenticates the connection to the remote device.  |
+| ``ansible_become`` | no       | yes, no\*   | Instructs the module to enter privileged mode on the remote device before sending any commands; if value is unspecified, the ANSIBLE_BECOME environment variable value is used, and the device attempts to execute all commands in non-privileged mode |
+| ``ansible_become_method`` | no       | enable, sudo\*   | Instructs the module to allow the become method to be specified for handling privilege escalation; if value is unspecified, the ANSIBLE_BECOME_METHOD environment variable value is used. |
+| ``ansible_become_pass`` | no       |            | Specifies the password to use if required to enter privileged mode on the remote device; if ``ansible_become`` is set to no this key is not applicable. |
+| ``ansible_network_os`` | yes      | dellos6/dellos9/dellos10, null\*  | This value is used to load the correct terminal and cliconf plugins to communicate with the remote device. |
 
 > **NOTE**: Asterisk (\*) denotes the default value if none is specified.
 
@@ -153,12 +154,12 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
 **Sample host_vars/leaf1**
 
     hostname: leaf1
-    provider:
-      host: "{{ hostname }}"
-      username: xxxxx
-      password: xxxxx
-      authorize: yes
-      auth_pass: xxxxx 
+    ansible_become: yes
+    ansible_become_method: xxxxx
+    ansible_become_pass: xxxxx
+    ansible_ssh_user: xxxxx
+    ansible_ssh_pass: xxxxx
+    ansible_network_os: dellos9
     build_dir: ../temp/dellos9
 	  
     dellos_bgp:

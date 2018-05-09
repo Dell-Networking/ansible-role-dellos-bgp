@@ -13,7 +13,7 @@ Installation
 Role variables
 --------------
  
-- Role is abstracted using the *ansible_network_os*/*ansible_net_os_name* variable that can take dellos9, dellos6, and dellos10 values
+- Role is abstracted using the *ansible_network_os* variable that can take dellos9, dellos6, and dellos10 values
 - If variable *dellos_cfg_generate* is set to true, it generates the role configuration commands in a file
 - Any role variable with a corresponding state variable setting to absent negates the configuration of that variable
 - Setting an empty value for any variable negates the corresponding configuration
@@ -149,7 +149,7 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
 
 **Sample hosts file**
 
-    leaf1 ansible_host= <ip_address> ansible_net_os_name= <OS name(dellos9/dellos6/dellos10)>
+    leaf1 ansible_host= <ip_address> 
 
 **Sample host_vars/leaf1**
 

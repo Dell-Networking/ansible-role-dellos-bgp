@@ -25,6 +25,13 @@ Role variables
 |------------|---------------------------|---------------------------------------------------------|-----------------------|
 | ``asn`` | string (required) | Configures the autonomous system (AS) number of the local BGP instance | dellos6, dellos9, dellos10 |
 | ``router_id`` | string | Configures the IP address of the local BGP router instance | dellos6, dellos9, dellos10 |
+| ``bfd_global`` | boolean | Configures the Global bfd  | dellos10 |
+| ``bfd`` | dictionary | Configures the BGP router instance bfd attribute (see ``bfd.*``)| dellos10 |
+| ``bfd.interval`` | integer | Configures the bfd interval value | dellos10 |
+| ``bfd.min_rx:`` | integer | Configures the bfd min_rx value | dellos10 |
+| ``bfd.multiplier`` | integer | Configures the bfd multiplier value | dellos10 |
+| ``bfd.role`` | string: active, passive | Configures the bfd role | dellos10 |
+| ``bfd.state`` | string: absent,present\* | Removes bfd configuration  if set to absent | dellos10 |
 | ``graceful_restart`` | boolean | Configures graceful restart capability | dellos9, dellos10 |
 | ``graceful_restart.state`` | string: absent,present\* | Removes graceful restart capability if set to absent | dellos9 |
 | ``maxpath_ibgp`` | integer | Configures the maximum number of paths to forward packets through iBGP (1 to 64; default 1) | dellos6, dellos9, dellos10 |
@@ -73,7 +80,7 @@ Role variables
 | ``send_community.type`` | string (required)         | Configures the send community attribute to the BGP neighbor | dellos10 |
 | ``send_community.state`` | string: absent,present\* | Deletes the send community attribute of the BGP neighbor if set to absent | dellos10 |
 | ``neighbor.address_family`` | list | Configures address family commands on the BGP neighbor (see ``address_family.*``)| dellos10 |
-| ``address_family.type`` | string (required): ipv4,ipv6         | Configures IPv4/IPv6 address family command mode on the BGP neighbor  | dellos10 |
+| ``address_family.type`` | string (required): ipv4,ipv6,l2vpn         | Configures IPv4/IPv6/EVPN address family command mode on the BGP neighbor  | dellos10 |
 | ``address_family.activate`` | boolean   | Configures activation/deactivation of IPv4/IPv6 address family command mode on the BGP neighbor  | dellos10 |
 | ``address_family.allow_as_in`` | integer  | Configures the local AS number in the as-path | dellos10 |
 | ``address_family.next_hop_self`` | boolean   | Configures disabling the next-hop calculation for the neighbor | dellos10 |
@@ -99,7 +106,7 @@ Role variables
 | ``neighbor.adv_interval`` | integer       | Configures the advertisement interval of the neighbor  | dellos9, dellos10 |
 | ``neighbor.fall_over`` | string: absent,present       | Configures the session fall on peer-route loss  |  dellos9, dellos10 |
 | ``neighbor.sender_loop_detect`` | boolean: true,false         | Enables/disables the sender-side loop detect for neighbors | dellos9, dellos10 |
-| ``neighbor.src_loopback`` | integer         | Configures the source loopback interface for routing packets | dellos6, dellos9  |
+| ``neighbor.src_loopback`` | integer         | Configures the source loopback interface for routing packets | dellos6, dellos9, dellos10  |
 | ``neighbor.src_loopback_state`` | string: absent,present\* | Deletes the source for routing packets if set to absent                 | dellos6, dellos9 |
 | ``neighbor.ebgp_multihop`` | integer | Configures the maximum-hop count value allowed in eBGP neighbors that are not directly connected (default 255) | dellos6, dellos9, dellos10 |
 | ``neighbor.passive`` | boolean: true,false\*     | Configures the passive BGP peer group; supported only when neighbor is a peer-group | dellos9 |                 

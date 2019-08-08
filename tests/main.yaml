@@ -5,6 +5,13 @@
   dellos_bgp:
     asn: 12
     maxpath_ibgp: 2
+    bfd_global: true
+    bfd:
+      interval: 200
+      min_rx: 200
+      multiplier: 3
+      role: "active"
+      state: "present"
     log_neighbor_changes: true
     fast_ext_fallover: false
     always_compare_med: true
@@ -46,6 +53,7 @@
         subnet: 10.128.4.192/27
         state: present
       - type: ipv4
+        description: "U_site2-spine1"
         remote_asn: 11
         ip: 192.168.10.1
         peergroup: peer1
@@ -53,8 +61,12 @@
         sender_loop_detect: true
         password: bgppassword
         route_reflector_client: true
+        update_source: 1
         address_family:
           - type: ipv4
+            activate: true
+            state: present
+          - type: l2vpn
             activate: true
             state: present
         send_community:
@@ -62,6 +74,7 @@
             state: present
         state: present
       - type: ipv4
+        description: "U_site1-spine2"
         remote_asn: 13
         local_as: 10
         weight: 10

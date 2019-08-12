@@ -12,7 +12,7 @@ Installation
 
 Role variables
 --------------
- 
+
 - Role is abstracted using the *ansible_network_os* variable that can take dellos9, dellos6, and dellos10 values
 - If variable *dellos_cfg_generate* is set to true, it generates the role configuration commands in a file
 - Any role variable with a corresponding state variable setting to absent negates the configuration of that variable
@@ -87,7 +87,7 @@ Role variables
 | ``neighbor.remote_asn`` | string (required)         | Configures the remote AS number of the BGP neighbor  | dellos6, dellos9, dellos10 |
 | ``neighbor.remote_asn_state`` | string: absent,present\* | Deletes the remote AS number from the peer group if set to absent; supported only when *neighbor.type* is "peergroup" | dellos6, dellos9, dellos10 |
 | ``neighbor.timer`` | string          | Configures neighbor timers (<int> <int>); 5 10, where 5 is the keepalive interval and 10 is the holdtime | dellos6, dellos9, dellos10 |
-| ``neighbor.default_originate`` | boolean: true, false\*     | Configures default originate routes to the BGP neighbor | dellos6, dellos9 | 
+| ``neighbor.default_originate`` | boolean: true, false\*     | Configures default originate routes to the BGP neighbor | dellos6, dellos9 |
 | ``neighbor.peergroup`` | string          | Configures neighbor to BGP peer-group (configured peer-group name) | dellos6, dellos9, dellos10 |
 | ``neighbor.peergroup_state`` | string: absent,present\* | Deletes the IPv4 BGP neighbor from the peer-group if set to absent | dellos6, dellos9, dellos10 |
 | ``neighbor.distribute_list`` | list | Configures the distribute list to filter networks from routing updates (see ``distribute_list.*``) | dellos9, dellos10 |
@@ -102,10 +102,11 @@ Role variables
 | ``neighbor.src_loopback`` | integer         | Configures the source loopback interface for routing packets | dellos6, dellos9  |
 | ``neighbor.src_loopback_state`` | string: absent,present\* | Deletes the source for routing packets if set to absent                 | dellos6, dellos9 |
 | ``neighbor.ebgp_multihop`` | integer | Configures the maximum-hop count value allowed in eBGP neighbors that are not directly connected (default 255) | dellos6, dellos9, dellos10 |
-| ``neighbor.passive`` | boolean: true,false\*     | Configures the passive BGP peer group; supported only when neighbor is a peer-group | dellos9 |                 
+| ``neighbor.passive`` | boolean: true,false\*     | Configures the passive BGP peer group; supported only when neighbor is a peer-group | dellos9 |
 | ``neighbor.subnet`` | string (required)         | Configures the passive BGP neighbor to this subnet; required together with the *neighbor.passive* key for dellos9 devices | dellos6, dellos9, dellos10 |
 | ``neighbor.subnet_state`` | string: absent,present\* | Deletes the subnet range set for dynamic IPv4 BGP neighbor if set to absent            | dellos6, dellos9, dellos10 |
 | ``neighbor.limit`` | integer    | Configures maximum dynamic peers count (key is required together with ``neighbor.subnet``) | dellos10 |
+| ``neighbor.bfd`` | boolean | Enables BDF for neighbor | dellos10 |
 | ``neighbor.state`` | string: absent,present\* | Deletes the IPv4 BGP neighbor if set to absent | dellos6, dellos9, dellos10 |
 | ``redistribute`` | list | Configures the redistribute list to get information from other routing protocols (see ``redistribute.*``) | dellos6, dellos9, dellos10 |
 | ``redistribute.route_type`` | string (required): static,connected        | Configures the name of the routing protocol to redistribute | dellos6, dellos9, dellos10 |
@@ -113,6 +114,18 @@ Role variables
 | ``redistribute.route_map`` |  string: absent,present\*    | Deletes the route-map to redistribute if set to absent        | dellos9, dellos10 |
 | ``redistribute.address_type`` | string (required): ipv4,ipv6                  | Configures the address type of IPv4 or IPv6 routes | dellos6, dellos9, dellos10 |
 | ``redistribute.state`` | string: absent,present\* | Deletes the redistribution information if set to absent | dellos6, dellos9, dellos10 |
+| ``bfd`` | dictionary | Configures BFD parameters | dellos10 |
+| ``bfd.interval`` | integer: 100 to 1000 | Configures time interval for sending control packets to BFD peers in ms| dellos10 |
+| ``bfd.min_rx`` | integer: 100 to 1000 | Configures maximum waiting time for receiving control packets from BFD peers in ms| dellos10 |
+| ``bfd.multiplier`` | integer: 3 to 50 | Configures maximum number of consecutive packets that are not received from BFD peers before session state changes to Down| dellos10 |
+| ``bfd.role``| string: active, passive | Configures BFD role | dellos10 |
+| ``bfd.state`` |s tring: absent,present\*    | Disables BFD if to absent| dellos10 |
+| ``bfd.all_neighbors`` | dictionary | Enables BFD for all BGP neighbors | dellos10 |
+| ``bfd.all_neighbors.interval`` | integer: 100 to 1000 | Configures time interval for sending control packets to BFD peers in ms| dellos10 |
+| ``bfd.all_neighbors.min_rx`` | integer: 100 to 1000 | Configures maximum waiting time for receiving control packets from BFD peers in ms| dellos10 |
+| ``bfd.all_neighbors.multiplier`` | integer: 3 to 50 | Configures maximum number of consecutive packets that are not received from BFD peers before session state changes to Down| dellos10 |
+| ``bfd.all_neighbors.role``| string: active, passive | Configures BFD role | dellos10 |
+| ``bfd.all_neighbors.state`` |string: absent,present\*    | Disables BFD for all neighbors if set to absent | dellos10 |
 | ``state`` |  string: absent,present\*    | Deletes the local router BGP instance if set to absent      | dellos6, dellos9, dellos10 |
 
 > **NOTE**: Asterisk (\*) denotes the default value if none is specified.

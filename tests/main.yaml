@@ -39,6 +39,7 @@
     neighbor:
       - name: peer1
         type: peergroup
+        bfd: yes
         remote_asn: 14
         distribute_list:
            in: aaa
@@ -46,6 +47,7 @@
         subnet: 10.128.4.192/27
         state: present
       - type: ipv4
+        description: "O_site2-spine1"
         remote_asn: 11
         ip: 192.168.10.1
         peergroup: peer1
@@ -53,8 +55,12 @@
         sender_loop_detect: true
         password: bgppassword
         route_reflector_client: true
+        src_loopback: 0
         address_family:
           - type: ipv4
+            activate: true
+            state: present
+          - type: l2vpn
             activate: true
             state: present
         send_community:
@@ -97,6 +103,12 @@
       - route_type: static
         state: present
         address_type: ipv4
+    bfd_all_neighbors:
+      interval: 200
+      min_rx: 200
+      multiplier: 3
+      role: active
+      state: present
     state: absent
 
 # Sample variables for dellos6 device

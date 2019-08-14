@@ -44,6 +44,7 @@ dellos_bgp:
         state: present
     neighbor:
       - type: ipv4
+        description: "U_site2-spine1"
         remote_asn: 11
         ip: 192.168.10.1
         peergroup: peer1
@@ -52,6 +53,7 @@ dellos_bgp:
         fall_over: present
         password: bgppassword
         route_reflector_client: true
+        src_loopback: 0
         address_family:
           - type: ipv4
             activate: true
@@ -94,13 +96,7 @@ dellos_bgp:
         route_map_name: aa
         address_type: ipv4
         state: present
-    bfd:
-      all_neighbors:
-        interval: 200
-        min_rx: 200
-        multiplier: 3
-        role: active
-        state: present
+    bfd_all_neighbors:
       interval: 200
       min_rx: 200
       multiplier: 3
@@ -114,22 +110,6 @@ dellos_bgp:
 {% if bgp_vars.state is defined and bgp_vars.state == "absent" %}
 no router bgp
 {% else %}
-  {% if bgp_vars.bfd is defined %}
-  {% if bgp_vars.bfd.state is defined and bgp_vars.bfd.state == "absent" %}
-no bfd enable
-no bfd interval
-  {% else %}
-  {% set bfd_vars = bgp_vars.bfd %}
-    {% if bfd_vars.interval is defined and bfd_vars.min_rx is defined and bfd_vars.multiplier is defined %}
-      {% if bfd_vars.role is defined %}
-bfd interval {{ bfd_vars.interval }} min_rx {{ bfd_vars.min_rx }} multiplier {{ bfd_vars.multiplier }} role {{ bfd_vars.role }}
-      {% else %}
-bfd interval {{ bfd_vars.interval }} min_rx {{ bfd_vars.min_rx }} multiplier {{ bfd_vars.multiplier }}
-      {% endif %}
-    {% endif %}
-bfd enable
-  {% endif %}
-  {% endif %}
   {# Add Feature to the switch #}
   {% if bgp_vars.asn is defined and bgp_vars.asn %}
 router bgp {{ bgp_vars.asn }}
@@ -141,11 +121,11 @@ router bgp {{ bgp_vars.asn }}
       {% endif %}
     {% endif %}
 
-    {% if bgp_vars.bfd is defined and bgp_vars.bfd.all_neighbors is defined %}
-    {% if bgp_vars.bfd.all_neighbors.state is defined and bgp_vars.bfd.all_neighbors.state == "absent"%}
+    {% if bgp_vars.bfd_all_neighbors is defined and bgp_vars.bfd_all_neighbors is defined %}
+    {% if bgp_vars.bfd_all_neighbors.state is defined and bgp_vars.bfd_all_neighbors.state == "absent"%}
  no bfd all-neighbors
     {% else %}
-    {% set bfd_vars = bgp_vars.bfd.all_neighbors %}
+    {% set bfd_vars = bgp_vars.bfd_all_neighbors %}
       {% if bfd_vars.interval is defined and bfd_vars.min_rx is defined and bfd_vars.multiplier is defined %}
  bfd all-neighbors interval {{ bfd_vars.interval }} min_rx {{ bfd_vars.min_rx }} multiplier {{ bfd_vars.multiplier }} role {{ bfd_vars.role }}
       {% else %}
@@ -365,6 +345,13 @@ router bgp {{ bgp_vars.asn }}
  no neighbor {{ tag_or_ip }}
               {% else %}
  neighbor {{ tag_or_ip }}
+                {% if neighbor.description is defined %}
+                  {% if neighbor.description %}
+  description "{{ neighbor.description }}"
+                  {% else %}
+  no description
+                  {% endif %}
+                {% endif %}
                 {% if neighbor.peergroup is defined and neighbor.peergroup %}
                   {% if neighbor.peergroup_state is defined and neighbor.peergroup_state == "absent" %}
   no inherit template {{ neighbor.peergroup }}
@@ -418,6 +405,15 @@ router bgp {{ bgp_vars.asn }}
   no weight
               {% endif %}
             {% endif %}
+
+            {% if neighbor.src_loopback is defined %}
+               {% if neighbor.src_loopback|int(-1) != -1 %}
+  update-source loopback{{ neighbor.src_loopback }}
+               {% else %}
+  no update-source loopback
+               {% endif %}
+            {% endif %}
+
             {% if neighbor.ebgp_multihop is defined %}
               {% if neighbor.ebgp_multihop %}
   ebgp-multihop {{ neighbor.ebgp_multihop }}
@@ -454,9 +450,17 @@ router bgp {{ bgp_vars.asn }}
               {% for af in neighbor.address_family %}
                 {% if af.type is defined and af.type %}
                   {% if af.state is defined and af.state == "absent" %}
+                    {% if af.type == "l2vpn" %}
+  no address-family {{ af.type }} evpn
+                    {% else %}
   no address-family {{ af.type }} unicast
+                    {% endif %}
                   {% else %}
+                    {% if af.type == "l2vpn" %}
+  address-family {{ af.type }} evpn
+                    {% else %}
   address-family {{ af.type }} unicast
+                    {% endif %}
                     {% if af.activate is defined %}
                       {% if af.activate %}
    activate

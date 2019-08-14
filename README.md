@@ -73,7 +73,7 @@ Role variables
 | ``send_community.type`` | string (required)         | Configures the send community attribute to the BGP neighbor | dellos10 |
 | ``send_community.state`` | string: absent,present\* | Deletes the send community attribute of the BGP neighbor if set to absent | dellos10 |
 | ``neighbor.address_family`` | list | Configures address family commands on the BGP neighbor (see ``address_family.*``)| dellos10 |
-| ``address_family.type`` | string (required): ipv4,ipv6         | Configures IPv4/IPv6 address family command mode on the BGP neighbor  | dellos10 |
+| ``address_family.type`` | string (required): ipv4,ipv6,l2vpn         | Configures IPv4/IPv6/EVPN address family command mode on the BGP neighbor  | dellos10 |
 | ``address_family.activate`` | boolean   | Configures activation/deactivation of IPv4/IPv6 address family command mode on the BGP neighbor  | dellos10 |
 | ``address_family.allow_as_in`` | integer  | Configures the local AS number in the as-path | dellos10 |
 | ``address_family.next_hop_self`` | boolean   | Configures disabling the next-hop calculation for the neighbor | dellos10 |
@@ -99,7 +99,7 @@ Role variables
 | ``neighbor.adv_interval`` | integer       | Configures the advertisement interval of the neighbor  | dellos9, dellos10 |
 | ``neighbor.fall_over`` | string: absent,present       | Configures the session fall on peer-route loss  |  dellos9, dellos10 |
 | ``neighbor.sender_loop_detect`` | boolean: true,false         | Enables/disables the sender-side loop detect for neighbors | dellos9, dellos10 |
-| ``neighbor.src_loopback`` | integer         | Configures the source loopback interface for routing packets | dellos6, dellos9  |
+| ``neighbor.src_loopback`` | integer         | Configures the source loopback interface for routing packets | dellos6, dellos9, dellos10  |
 | ``neighbor.src_loopback_state`` | string: absent,present\* | Deletes the source for routing packets if set to absent                 | dellos6, dellos9 |
 | ``neighbor.ebgp_multihop`` | integer | Configures the maximum-hop count value allowed in eBGP neighbors that are not directly connected (default 255) | dellos6, dellos9, dellos10 |
 | ``neighbor.passive`` | boolean: true,false\*     | Configures the passive BGP peer group; supported only when neighbor is a peer-group | dellos9 |
@@ -107,6 +107,7 @@ Role variables
 | ``neighbor.subnet_state`` | string: absent,present\* | Deletes the subnet range set for dynamic IPv4 BGP neighbor if set to absent            | dellos6, dellos9, dellos10 |
 | ``neighbor.limit`` | integer    | Configures maximum dynamic peers count (key is required together with ``neighbor.subnet``) | dellos10 |
 | ``neighbor.bfd`` | boolean | Enables BDF for neighbor | dellos10 |
+| ``neighbor.description`` | string | Configures neighbor description | dellos10 |
 | ``neighbor.state`` | string: absent,present\* | Deletes the IPv4 BGP neighbor if set to absent | dellos6, dellos9, dellos10 |
 | ``redistribute`` | list | Configures the redistribute list to get information from other routing protocols (see ``redistribute.*``) | dellos6, dellos9, dellos10 |
 | ``redistribute.route_type`` | string (required): static,connected        | Configures the name of the routing protocol to redistribute | dellos6, dellos9, dellos10 |
@@ -114,18 +115,12 @@ Role variables
 | ``redistribute.route_map`` |  string: absent,present\*    | Deletes the route-map to redistribute if set to absent        | dellos9, dellos10 |
 | ``redistribute.address_type`` | string (required): ipv4,ipv6                  | Configures the address type of IPv4 or IPv6 routes | dellos6, dellos9, dellos10 |
 | ``redistribute.state`` | string: absent,present\* | Deletes the redistribution information if set to absent | dellos6, dellos9, dellos10 |
-| ``bfd`` | dictionary | Configures BFD parameters | dellos10 |
-| ``bfd.interval`` | integer: 100 to 1000 | Configures time interval for sending control packets to BFD peers in ms| dellos10 |
-| ``bfd.min_rx`` | integer: 100 to 1000 | Configures maximum waiting time for receiving control packets from BFD peers in ms| dellos10 |
-| ``bfd.multiplier`` | integer: 3 to 50 | Configures maximum number of consecutive packets that are not received from BFD peers before session state changes to Down| dellos10 |
-| ``bfd.role``| string: active, passive | Configures BFD role | dellos10 |
-| ``bfd.state`` |s tring: absent,present\*    | Disables BFD if to absent| dellos10 |
-| ``bfd.all_neighbors`` | dictionary | Enables BFD for all BGP neighbors | dellos10 |
-| ``bfd.all_neighbors.interval`` | integer: 100 to 1000 | Configures time interval for sending control packets to BFD peers in ms| dellos10 |
-| ``bfd.all_neighbors.min_rx`` | integer: 100 to 1000 | Configures maximum waiting time for receiving control packets from BFD peers in ms| dellos10 |
-| ``bfd.all_neighbors.multiplier`` | integer: 3 to 50 | Configures maximum number of consecutive packets that are not received from BFD peers before session state changes to Down| dellos10 |
-| ``bfd.all_neighbors.role``| string: active, passive | Configures BFD role | dellos10 |
-| ``bfd.all_neighbors.state`` |string: absent,present\*    | Disables BFD for all neighbors if set to absent | dellos10 |
+| ``bfd_all_neighbors`` | dictionary | Enables BFD for all BGP neighbors | dellos10 |
+| ``bfd_all_neighbors.interval`` | integer: 100 to 1000 | Configures time interval for sending control packets to BFD peers in ms| dellos10 |
+| ``bfd_all_neighbors.min_rx`` | integer: 100 to 1000 | Configures maximum waiting time for receiving control packets from BFD peers in ms| dellos10 |
+| ``bfd_all_neighbors.multiplier`` | integer: 3 to 50 | Configures maximum number of consecutive packets that are not received from BFD peers before session state changes to Down| dellos10 |
+| ``bfd_all_neighbors.role``| string: active, passive | Configures BFD role | dellos10 |
+| ``bfd_all_neighbors.state`` |string: absent,present\*    | Deletes BFD for all neighbors if set to absent | dellos10 |
 | ``state`` |  string: absent,present\*    | Deletes the local router BGP instance if set to absent      | dellos6, dellos9, dellos10 |
 
 > **NOTE**: Asterisk (\*) denotes the default value if none is specified.

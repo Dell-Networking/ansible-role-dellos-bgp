@@ -5,13 +5,6 @@
   dellos_bgp:
     asn: 12
     maxpath_ibgp: 2
-    bfd_global: true
-    bfd:
-      interval: 200
-      min_rx: 200
-      multiplier: 3
-      role: "active"
-      state: "present"
     log_neighbor_changes: true
     fast_ext_fallover: false
     always_compare_med: true
@@ -46,6 +39,7 @@
     neighbor:
       - name: peer1
         type: peergroup
+        bfd: yes
         remote_asn: 14
         distribute_list:
            in: aaa
@@ -61,7 +55,7 @@
         sender_loop_detect: true
         password: bgppassword
         route_reflector_client: true
-        update_source: 1
+        src_loopback: 0
         address_family:
           - type: ipv4
             activate: true
@@ -77,7 +71,6 @@
         description: "U_site1-spine2"
         remote_asn: 13
         local_as: 10
-        weight: 10
         ip: 192.168.12.3
         address_family:
           - type: ipv4
@@ -110,6 +103,12 @@
       - route_type: static
         state: present
         address_type: ipv4
+    bfd_all_neighbors:
+      interval: 200
+      min_rx: 200
+      multiplier: 3
+      role: active
+      state: present
     state: absent
 
 # Sample variables for dellos6 device

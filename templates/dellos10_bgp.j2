@@ -54,7 +54,7 @@ dellos_bgp:
         password: bgppassword
         route_reflector_client: true
         src_loopback: 0
-        address_family:
+        address_family: 
           - type: ipv4
             activate: true
             state: present
@@ -454,7 +454,7 @@ router bgp {{ bgp_vars.asn }}
   no address-family {{ af.type }} evpn
                     {% else %}
   no address-family {{ af.type }} unicast
-                    {% endif %}
+                    {% endif %} 
                   {% else %}
                     {% if af.type == "l2vpn" %}
   address-family {{ af.type }} evpn

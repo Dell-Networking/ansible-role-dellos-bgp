@@ -47,7 +47,7 @@
         subnet: 10.128.4.192/27
         state: present
       - type: ipv4
-        description: "O_site2-spine1"
+        description: "U_site2-spine1"
         remote_asn: 11
         ip: 192.168.10.1
         peergroup: peer1
@@ -68,9 +68,9 @@
             state: present
         state: present
       - type: ipv4
+        description: "U_site1-spine2"
         remote_asn: 13
         local_as: 10
-        weight: 10
         ip: 192.168.12.3
         address_family:
           - type: ipv4

@@ -1,9 +1,7 @@
 #jinja2: trim_blocks: True, lstrip_blocks: True
 {###########################################
-
 Purpose:
 Configure BGP commands for dellos10 Devices
-
 dellos_bgp:
     asn: 12
     router_id: 90.1.1.4
@@ -103,7 +101,6 @@ dellos_bgp:
       role: active
       state: present
     state: present
-
 ################################}
 {% if dellos_bgp is defined and dellos_bgp %}
 {% set bgp_vars = dellos_bgp %}

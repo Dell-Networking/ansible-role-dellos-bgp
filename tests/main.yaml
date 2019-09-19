@@ -1,6 +1,5 @@
 ---
 # vars file for Dell-Networking.dellos-bgp, below gives a sample configuration
-
 # Sample variables for dellos10 device
   dellos_bgp:
     asn: 12
@@ -248,4 +247,3 @@
         address_type: ipv6
         state: present
     state: present
-

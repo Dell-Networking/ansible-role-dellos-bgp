@@ -75,6 +75,7 @@ Role variables
 | ``neighbor.address_family`` | list | Configures address family commands on the BGP neighbor (see ``address_family.*``)| dellos10 |
 | ``address_family.type`` | string (required): ipv4,ipv6,l2vpn         | Configures IPv4/IPv6/EVPN address family command mode on the BGP neighbor  | dellos10 |
 | ``address_family.activate`` | boolean   | Configures activation/deactivation of IPv4/IPv6 address family command mode on the BGP neighbor  | dellos10 |
+| ``address_family.sender_loop_detect`` | boolean   | Enable/Disable the sender-side loop detection process for a BGP neighbor of IPv4/IPv6/l2vpn address family  | dellos10 |
 | ``address_family.allow_as_in`` | integer  | Configures the local AS number in the as-path | dellos10 |
 | ``address_family.next_hop_self`` | boolean   | Configures disabling the next-hop calculation for the neighbor | dellos10 |
 | ``address_family.soft_reconf`` | boolean   | Configures per neighbor soft reconfiguration | dellos10 |

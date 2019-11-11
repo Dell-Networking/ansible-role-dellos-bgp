@@ -58,9 +58,11 @@
         address_family:
           - type: ipv4
             activate: true
+            sender_loop_detect: true
             state: present
           - type: l2vpn
             activate: true
+            sender_loop_detect: 
             state: present
         send_community:
           - type: standard
@@ -74,6 +76,7 @@
         address_family:
           - type: ipv4
             activate: true
+            sender_loop_detect: 
             allow_as_in: 5
             next_hop_self: true
             soft_reconf: true

@@ -46,6 +46,17 @@
         subnet: 10.128.4.192/27
         state: present
       - type: ipv4
+        interface: vlan20
+        send_community:
+          - type: extended
+            state: present
+        address_family:
+          - type: l2vpn
+            activate: true
+            state: present
+        admin: up
+        state: present
+      - type: ipv4
         description: "U_site2-spine1"
         remote_asn: 11
         ip: 192.168.10.1

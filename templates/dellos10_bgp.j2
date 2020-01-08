@@ -42,11 +42,23 @@ dellos_bgp:
         state: present
     neighbor:
       - type: ipv4
+        interface: vlan20
+        send_community:
+          - type: extended
+            state: present
+        address_family:
+          - type: l2vpn
+            activate: true
+            state: present
+        admin: up
+        state: present
+      - type: ipv4
         description: "U_site2-spine1"
         remote_asn: 11
         ip: 192.168.10.1
         peergroup: peer1
         peergroup_state: present
+        peergroup_type: ibgp
         adv_interval: 40
         fall_over: present
         password: bgppassword
@@ -55,7 +67,6 @@ dellos_bgp:
         address_family: 
           - type: ipv4
             activate: true
-            sender_loop_detect: true
             state: present
         send_community:
           - type: standard
@@ -101,7 +112,13 @@ dellos_bgp:
       multiplier: 3
       role: active
       state: present
-    state: present
+      state: present
+    vrf:
+      name: "test"
+      address_type: ipv4
+      redistribute:
+        - route_type: l2vpn
+
 ################################}
 {% if dellos_bgp is defined and dellos_bgp %}
 {% set bgp_vars = dellos_bgp %}
@@ -359,6 +376,71 @@ router bgp {{ bgp_vars.asn }}
                 {% endif %}
               {% endif %}
           {% endif %}
+          {% if neighbor.interface is defined and neighbor.interface %}
+              {% if neighbor.state is defined and neighbor.state == "absent" %}
+ no neighbor interface {{ neighbor.interface }}
+              {% else %}
+ neighbor interface {{ neighbor.interface }}
+                {% if neighbor.description is defined %}
+                  {% if neighbor.description %}
+  description "{{ neighbor.description }}"
+                  {% else %}
+  no description
+                  {% endif %}
+                {% endif %}
+                {% if neighbor.admin is defined %}
+                  {% if neighbor.admin == "up" %}
+  no shutdown
+                  {% else %}
+  shutdown
+                  {% endif %}
+                {% endif %}
+                {% if neighbor.peergroup is defined and neighbor.peergroup %}
+                  {% if neighbor.peergroup_state is defined and neighbor.peergroup_state == "absent" %}
+  no inherit template {{ neighbor.peergroup }}
+                  {% elif neighbor.peergroup_type is defined %}
+  inherit template {{ neighbor.peergroup }} inherit-type {{ neighbor.peergroup_type }}
+                  {% endif %}
+                {% endif %}
+                {% if neighbor.send_community is defined and neighbor.send_community %}
+                  {% for comm in neighbor.send_community %}
+                    {% if comm.type is defined and comm.type %}
+                      {% if comm.state is defined and comm.state == "absent" %}
+                      no send-community {{ comm.type }}
+                      {% else %}
+                      send-community {{ comm.type }}
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+                {% if neighbor.address_family is defined and neighbor.address_family %}
+                  {% for af in neighbor.address_family %}
+                    {% if af.type is defined and af.type %}
+                      {% if af.state is defined and af.state == "absent" %}
+                        {% if af.type == "l2vpn" %}
+                        no address-family {{ af.type }} evpn
+                        {% else %}
+                        no address-family {{ af.type }} unicast
+                        {% endif %}
+                      {% else %}
+                        {% if af.type == "l2vpn" %}
+                         address-family {{ af.type }} evpn
+                        {% else %}
+                         address-family {{ af.type }} unicast
+                        {% endif %}
+                        {% if af.activate is defined %}
+                          {% if af.activate %}
+                          activate
+                          {% else %}
+                          no activate
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+              {% endif %}
+          {% endif %}
         {% elif neighbor.type == "peergroup" %}
           {% if neighbor.name is defined and neighbor.name %}
             {% set tag_or_ip = neighbor.name %}
@@ -466,13 +548,6 @@ router bgp {{ bgp_vars.asn }}
    no activate
                       {% endif %}
                     {% endif %}
-                    {% if af.sender_loop_detect is defined %}
-                      {% if af.sender_loop_detect %}
-   sender-side-loop-detection
-                      {% else %}
-   no sender-side-loop-detection
-                      {% endif %}
-                    {% endif %}
                     {% if af.allow_as_in is defined %}
                       {% if af.allow_as_in %}
    allowas-in {{ af.allow_as_in }}
@@ -568,11 +643,54 @@ router bgp {{ bgp_vars.asn }}
                 {% endif %}
               {% endif %}
             {% endif %}
+            {% if neighbor.sender_loop_detect is defined %}
+  address-family ipv4 unicast
+              {% if neighbor.sender_loop_detect %}
+   sender-side-loop-detection
+              {% else %}
+   no sender-side-loop-detection
+              {% endif %}
+            {% endif %}
 
           {% endif %}
         {% endif %}
       {% endif %}
     {% endfor %}
+    {% if bgp_vars.vrf is defined %}
+     vrf {{ bgp_vars.vrf.name  }}
+      {% if bgp_vars.vrf.address_type is defined and  bgp_vars.vrf.state is defined and bgp_vars.vrf.state == "absent"  %}
+      no address-family {{ bgp_vars.vrf.address_type }} unicast
+      {% else %}
+      address-family {{ bgp_vars.vrf.address_type }} unicast
+      {% endif %}
+      {% if bgp_vars.vrf.redistribute is defined %}
+        {% for route in bgp_vars.vrf.redistribute %}
+          {% if route.route_type is defined %}
+            {% if route.state is defined and route.state == "absent" %}
+              no redistribute {{ route.route_type }}
+            {% else %}
+              {% if route.route_map_name is defined and route.route_map_name %}
+                {% if route.route_type == "ospf" and route.ospf_id %}
+              redistribute {{ route.route_type }} route.ospf_id route-map {{ route.route_map_name }}
+                {% elif route.route_type == "l2vpn" %}
+              redistribute {{ route.route_type }} evpn route-map {{ route.route_map_name }}
+                {% else %}
+              redistribute {{ route.route_type }} route-map {{ route.route_map_name }}
+                {% endif %}
+              {% else %}
+                {% if route.route_type == "ospf" and route.ospf_id %}
+              redistribute {{ route.route_type }} route.ospf_id
+                {% elif route.route_type == "l2vpn" %}
+              redistribute {{ route.route_type }} evpn
+                {% else %}
+              redistribute {{ route.route_type }}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endif %}
   {% endif %}
 
 

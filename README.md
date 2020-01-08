@@ -63,9 +63,11 @@ Role variables
 | ``ipv6_network.state`` | string: absent,present\* | Deletes an IPv6 BGP network if set to absent | dellos6, dellos9, dellos10 |
 | ``neighbor`` | list | Configures IPv4 BGP neighbors (see ``neighbor.*``) | dellos6, dellos9, dellos10 |
 | ``neighbor.ip`` | string (required)         | Configures the IPv4 address of the BGP neighbor (10.1.1.1)  | dellos6, dellos9, dellos10 |
+| ``neighbor.interface`` | string      | Configures the BGP neighbor interface details | dellos10  |
 | ``neighbor.name`` | string (required)         | Configures the BGP peer-group with this name; supported only when the neighbor is a peer group; mutually exclusive with *neighbor.ip* | dellos6, dellos9, dellos10 |
 | ``neighbor.type`` | string (required): ipv4,ipv6,peergroup       | Specifies the BGP neighbor type   | dellos6, dellos9, dellos10 |
 | ``neighbor.password`` | string      | Configures the BGP neighbor password  | dellos10  |
+| ``neighbor.peergroup_type`` | string (ibgp, ebgp)   | Configures the BGP neighbor peer group type| dellos10  |
 | ``neighbor.route_reflector_client`` | boolean      | Configures router reflector client on the BGP neighbor. | dellos10  |
 | ``neighbor.local_as`` | integer     | Configures the local AS for the BGP peer | dellos10  |
 | ``neighbor.weight`` | integer     | Configures the default weight for routes from the neighbor interface | dellos10  |
@@ -123,6 +125,11 @@ Role variables
 | ``bfd_all_neighbors.role``| string: active, passive | Configures BFD role | dellos10 |
 | ``bfd_all_neighbors.state`` |string: absent,present\*    | Deletes BFD for all neighbors if set to absent | dellos10 |
 | ``state`` |  string: absent,present\*    | Deletes the local router BGP instance if set to absent      | dellos6, dellos9, dellos10 |
+| ``vrf`` | dictionary | Enables VRF for BGP neighbors | dellos10 |
+| ``vrf.name`` | string (Required) | Configures VRF name | dellos10 |
+| ``vrf.address_type`` | string (required): ipv4,ipv6 | Configures address type ipv4 or ipv6 | dellos10 |
+| ``vrf.redistribute`` | dictionary | Enables redistribute option | dellos10 |
+| ``redistribute.route_type`` | string (l2vpn, ospf, bgp, connected) | Configure redistribute type | dellos10 |
 
 > **NOTE**: Asterisk (\*) denotes the default value if none is specified.
 

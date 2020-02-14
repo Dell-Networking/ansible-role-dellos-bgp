@@ -671,6 +671,7 @@ router bgp {{ bgp_vars.asn }}
     {% endfor %}
     {% if bgp_vars.vrf is defined %}
      vrf {{ bgp_vars.vrf.name  }}
+
       {% if bgp_vars.vrf.address_family is defined and  bgp_vars.vrf.state is defined and bgp_vars.vrf.state == "absent"  %}
       no address-family {{ bgp_vars.vrf.address_family.type }} unicast
       {% else %}
@@ -726,8 +727,6 @@ router bgp {{ bgp_vars.asn }}
       {% endif %}
     {% endif %}
   {% endif %}
-
-
   {% endif %}
 {% endif %}
 {% endif %}

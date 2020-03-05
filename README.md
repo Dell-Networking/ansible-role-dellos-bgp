@@ -77,7 +77,7 @@ Role variables
 | ``neighbor.address_family`` | list | Configures address family commands on the BGP neighbor (see ``address_family.*``)| dellos10 |
 | ``address_family.type`` | string (required): ipv4,ipv6,l2vpn         | Configures IPv4/IPv6/EVPN address family command mode on the BGP neighbor  | dellos10 |
 | ``address_family.activate`` | boolean   | Configures activation/deactivation of IPv4/IPv6 address family command mode on the BGP neighbor  | dellos10 |
-| ``address_family.sender_loop_detect`` | boolean   | Enable/Disable the sender-side loop detection process for a BGP neighbor of IPv4/IPv6/l2vpn address family  | dellos10 |
+| ``address_family.sender_loop_detect`` | boolean   | Enables/disables the sender-side loop detection process for a BGP neighbor of IPv4/IPv6/l2vpn address family  | dellos10 |
 | ``address_family.allow_as_in`` | integer  | Configures the local AS number in the as-path | dellos10 |
 | ``address_family.next_hop_self`` | boolean   | Configures disabling the next-hop calculation for the neighbor | dellos10 |
 | ``address_family.soft_reconf`` | boolean   | Configures per neighbor soft reconfiguration | dellos10 |
@@ -120,6 +120,7 @@ Role variables
 | ``redistribute.state`` | string: absent,present\* | Deletes the redistribution information if set to absent | dellos6, dellos9, dellos10 |
 | ``vrf`` | dictionary | Enables VRF under BGP | dellos10 |
 | ``vrf.name`` | string (Required)| Configures VRF name | dellos10 |
+| ``vrf.router_id`` | string | Configures Router ID for VRF | dellos10 |  
 | ``vrf.address_family`` | dictionary | Enables address familyaddress | dellos10 |
 | ``vrf.address_family.type`` | string (required): ipv4,ipv6 | Configures address type ipv4 or ipv6 | dellos10 |
 | ``vrf.redistribute`` | dictionary | Enables redistribute option | dellos10 |
@@ -133,15 +134,15 @@ Role variables
 | ``vrf.neighbor.interface`` | string  | Configures the BGP neighbor interface in vrf | dellos10  |
 | ``vrf.neighbor.remote_asn`` | integer  | Configures the remote AS for the BGP peer in vrf | dellos10  |
 | ``bfd_all_neighbors`` | dictionary | Enables BFD for all BGP neighbors | dellos10 |
-| ``bfd_all_neighbors.interval`` | integer: 100 to 1000 | Configures time interval for sending control packets to BFD peers in ms| dellos10 |
-| ``bfd_all_neighbors.min_rx`` | integer: 100 to 1000 | Configures maximum waiting time for receiving control packets from BFD peers in ms| dellos10 |
-| ``bfd_all_neighbors.multiplier`` | integer: 3 to 50 | Configures maximum number of consecutive packets that are not received from BFD peers before session state changes to Down| dellos10 |
+| ``bfd_all_neighbors.interval`` | integer: 100 to 1000 | Configures time interval for sending control packets to BFD peers in ms | dellos10 |
+| ``bfd_all_neighbors.min_rx`` | integer: 100 to 1000 | Configures maximum waiting time for receiving control packets from BFD peers in ms | dellos10 |
+| ``bfd_all_neighbors.multiplier`` | integer: 3 to 50 | Configures maximum number of consecutive packets that are not received from BFD peers before session state changes to down | dellos10 |
 | ``bfd_all_neighbors.role``| string: active, passive | Configures BFD role | dellos10 |
 | ``bfd_all_neighbors.state`` |string: absent,present\*    | Deletes BFD for all neighbors if set to absent | dellos10 |
 | ``state`` |  string: absent,present\*    | Deletes the local router BGP instance if set to absent      | dellos6, dellos9, dellos10 |
 | ``vrf`` | dictionary | Enables VRF for BGP neighbors | dellos10 |
 | ``vrf.name`` | string (Required) | Configures VRF name | dellos10 |
-| ``vrf.address_type`` | string (required): ipv4,ipv6 | Configures address type ipv4 or ipv6 | dellos10 |
+| ``vrf.address_type`` | string (required): ipv4,ipv6 | Configures address type IPv4 or IPv6 | dellos10 |
 | ``vrf.redistribute`` | dictionary | Enables redistribute option | dellos10 |
 | ``redistribute.route_type`` | string (l2vpn, ospf, bgp, connected) | Configure redistribute type | dellos10 |
 
@@ -200,6 +201,7 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
         graceful_restart: true
         vrf :
           name: "GREEN"
+          router_id: 172.17.0.3
           address_family:
              type: ipv4
              redistribute:

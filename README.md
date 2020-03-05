@@ -120,6 +120,7 @@ Role variables
 | ``redistribute.state`` | string: absent,present\* | Deletes the redistribution information if set to absent | dellos6, dellos9, dellos10 |
 | ``vrf`` | dictionary | Enables VRF under BGP | dellos10 |
 | ``vrf.name`` | string (Required)| Configures VRF name | dellos10 |
+| ``vrf.router_id`` | string | Configures Router ID for VRF | dellos10 |  
 | ``vrf.address_family`` | dictionary | Enables address familyaddress | dellos10 |
 | ``vrf.address_family.type`` | string (required): ipv4,ipv6 | Configures address type ipv4 or ipv6 | dellos10 |
 | ``vrf.redistribute`` | dictionary | Enables redistribute option | dellos10 |
@@ -131,7 +132,7 @@ Role variables
 | ``vrf.neighbor.type`` | string : ipv4,ipv6 | Specifies the BGP neighbor type under vrf  | dellos10 |
 | ``vrf.neighbor.ip`` | string | Configures the IP address of the BGP neighbor in vrf  | dellos10 |
 | ``vrf.neighbor.interface`` | string  | Configures the BGP neighbor interface in vrf | dellos10  |
-| ``vrf.neighbor.remote_as`` | integer  | Configures the remote AS for the BGP peer in vrf | dellos10  |
+| ``vrf.neighbor.remote_asn`` | integer  | Configures the remote AS for the BGP peer in vrf | dellos10  |
 | ``bfd_all_neighbors`` | dictionary | Enables BFD for all BGP neighbors | dellos10 |
 | ``bfd_all_neighbors.interval`` | integer: 100 to 1000 | Configures time interval for sending control packets to BFD peers in ms | dellos10 |
 | ``bfd_all_neighbors.min_rx`` | integer: 100 to 1000 | Configures maximum waiting time for receiving control packets from BFD peers in ms | dellos10 |
@@ -200,6 +201,7 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
         graceful_restart: true
         vrf :
           name: "GREEN"
+          router_id: 172.17.0.3
           address_family:
              type: ipv4
              redistribute:
@@ -209,7 +211,7 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
           neighbor:
             - type: ipv4
               ip: "172.16.1.1"
-              remote_as: 65400
+              remote_asn: 65400
               admin: up
         best_path:
            as_path: ignore

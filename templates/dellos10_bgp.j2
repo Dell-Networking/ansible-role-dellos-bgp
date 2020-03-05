@@ -23,7 +23,7 @@ dellos_bgp:
       neighbor:
         - type: ipv4
           ip: "172.16.1.1"
-          remote_as: 65400
+          remote_asn: 65400
           admin: up
     confederation:
       identifier: 25
@@ -677,6 +677,9 @@ router bgp {{ bgp_vars.asn }}
       {% else %}
       address-family {{ bgp_vars.vrf.address_family.type }} unicast
       {% endif %}
+      {% if bgp_vars.vrf.router_id is defined %}
+      router-id {{ bgp_vars.vrf.router_id }}
+      {% endif %}
       {% if bgp_vars.vrf.address_family.redistribute is defined %}
         {% for route in bgp_vars.vrf.address_family.redistribute %}
           {% if route.route_type is defined %}
@@ -713,8 +716,8 @@ router bgp {{ bgp_vars.asn }}
                    neighbor {{ ngbr.ip }}
                {% endif %}
             {% endif %}
-            {% if ngbr.remote_as is defined %}
-            remote-as {{ ngbr.remote_as }}
+            {% if ngbr.remote_asn is defined %}
+            remote-as {{ ngbr.remote_asn }}
             {% endif %}
             {% if ngbr.admin is defined %}
                {%if ngbr.admin == "up" %}

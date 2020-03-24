@@ -448,6 +448,14 @@ router bgp {{ bgp_vars.asn }}
                           no activate
                           {% endif %}
                         {% endif %}
+                        {% if af.allow_as_in is defined and af.allow_as_in %}
+                           allowas-in {{ af.allow_as_in }}
+                        {% endif %}
+                        {% if af.sender_loop_detect is defined %}
+                           {% if af.sender_loop_detect == "false" %}
+                              no sender-side-loop-detection
+                           {% endif %}
+                        {% endif %}
                       {% endif %}
                     {% endif %}
                   {% endfor %}
@@ -658,10 +666,10 @@ router bgp {{ bgp_vars.asn }}
             {% endif %}
             {% if neighbor.sender_loop_detect is defined %}
   address-family ipv4 unicast
-              {% if neighbor.sender_loop_detect %}
-   sender-side-loop-detection
+              {% if neighbor.sender_loop_detect == "false" %}
+                 no sender-side-loop-detection
               {% else %}
-   no sender-side-loop-detection
+                 sender-side-loop-detection
               {% endif %}
             {% endif %}
 

@@ -390,6 +390,7 @@ router bgp {{ bgp_vars.asn }}
               {% endif %}
           {% endif %}
           {% if neighbor.interface is defined and neighbor.interface %}
+            {% set tag_or_ip = neighbor.interface %}
               {% if neighbor.state is defined and neighbor.state == "absent" %}
  no neighbor interface {{ neighbor.interface }}
               {% else %}
@@ -567,6 +568,13 @@ router bgp {{ bgp_vars.asn }}
    activate
                       {% else %}
    no activate
+                      {% endif %}
+                    {% endif %}
+                    {% if af.sender_loop_detect is defined %}
+                      {% if af.sender_loop_detect %}
+   sender-side-loop-detection
+                      {% else %}
+   no sender-side-loop-detection
                       {% endif %}
                     {% endif %}
                     {% if af.allow_as_in is defined %}

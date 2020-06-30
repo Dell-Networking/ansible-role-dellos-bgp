@@ -43,8 +43,18 @@ Role variables
 | ``address_family_ipv4`` | dictionary | Configures IPv4 address family parameters (see ``address_family_ipv4.*``) | dellos10 |
 | ``address_family_ipv4.aggregate_addr`` | list | Configures IPv4 BGP aggregate entries (see ``aggregate_addr.*``) | dellos10 |
 | ``aggregate_addr.ip_and_mask`` | string | Configures the IPv4 BGP aggregate address | dellos10 |
+| ``address_family_ipv4.summary_only`` | boolean | Sets address to summary-only if true | dellos10 |
 | ``aggregate_addr.state`` | string: absent,present\* | Deletes an IPv4 BGP aggregate entry if set to absent   | dellos10 |
 | ``address_family_ipv4.dampening`` | dictionary | Configures route-flap dampening (see ``dampening.*``) | dellos10 |
+| ``dampening.value`` | dictionary | Configures dampening values (<half-life time> <start value to reuse> <start value to suppress> <max duration> format; default 15 750 2000 60) | dellos10 |
+| ``dampening.route_map`` | string | Configures the route-map to specify criteria for dampening | dellos10 |
+| ``dampening.state`` | string: absent,present\* | Deletes dampening if set to absent   | dellos10 |
+| ``address_family_ipv6`` | dictionary | Configures IPv6 address family parameters (see ``address_family_ipv6.*``) | dellos10 |
+| ``address_family_ipv6.aggregate_addr`` | list | Configures IPv6 BGP aggregate entries (see ``aggregate_addr.*``) | dellos10 |
+| ``aggregate_addr.ip_and_mask`` | string | Configures the IPv6 BGP aggregate address | dellos10 |
+| ``address_family_ipv6.summary_only`` | boolean | Sets address to summary-only if true | dellos10 |
+| ``aggregate_addr.state`` | string: absent,present\* | Deletes an IPv6 BGP aggregate entry if set to absent   | dellos10 |
+| ``address_family_ipv6.dampening`` | dictionary | Configures route-flap dampening (see ``dampening.*``) | dellos10 |
 | ``dampening.value`` | dictionary | Configures dampening values (<half-life time> <start value to reuse> <start value to suppress> <max duration> format; default 15 750 2000 60) | dellos10 |
 | ``dampening.route_map`` | string | Configures the route-map to specify criteria for dampening | dellos10 |
 | ``dampening.state`` | string: absent,present\* | Deletes dampening if set to absent   | dellos10 |

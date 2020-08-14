@@ -778,7 +778,18 @@ router bgp {{ bgp_vars.asn }}
       
       {% if vrf.neighbor is defined %}
         {% for ngbr in vrf.neighbor %}
-        {% if ngbr.type == "ipv4" or ngbr.type =="ipv6" %}
+        {% if ngbr.state is defined and ngbr.state == "absent" %}
+            {% if ngbr.interface is defined %}
+              no neighbor interface {{ ngbr.interface }}
+            {% endif %}
+            {% if ngbr.ip is defined %}
+              no neighbor {{ ngbr.ip }}
+            {% endif %}
+            {% if ngbr.name is defined %}
+              no template {{ ngbr.name }}
+            {% endif %}
+        {% else %}
+        {% if ngbr.type == "ipv4" or ngbr.type == "ipv6" %}
             {% if ngbr.interface is defined %}
             neighbor interface {{ ngbr.interface }}
             {% else %}
@@ -789,6 +800,14 @@ router bgp {{ bgp_vars.asn }}
             {% if ngbr.remote_asn is defined %}
             remote-as {{ ngbr.remote_asn }}
             {% endif %}
+
+            {% if ngbr.peergroup is defined and ngbr.peergroup_type is defined %}
+            inherit template {{ ngbr.peergroup }} inherit-type {{ ngbr.peergroup_type }}
+            {% elif ngbr.peergroup is defined %}
+            inherit template {{ ngbr.peergroup }}
+            {% endif %}
+
+
         {% elif ngbr.type == "peergroup" %}
           template {{ ngbr.name }}
         {% endif %}
@@ -807,6 +826,7 @@ router bgp {{ bgp_vars.asn }}
                 shutdown
                {% endif %}
             {% endif %}
+        {% endif %}
         {% endfor %}
       {% endif %}
     {% endfor %}

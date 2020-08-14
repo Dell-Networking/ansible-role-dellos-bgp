@@ -725,19 +725,21 @@ router bgp {{ bgp_vars.asn }}
         {% endif %}
       {% endif %}
     {% endfor %}
-    {% if bgp_vars.vrf is defined %}
-     vrf {{ bgp_vars.vrf.name  }}
+    {% if bgp_vars.vrfs is defined %}
+    {% for vrf in bgp_vars.vrfs %}
 
-      {% if bgp_vars.vrf.address_family is defined and  bgp_vars.vrf.state is defined and bgp_vars.vrf.state == "absent"  %}
-      no address-family {{ bgp_vars.vrf.address_family.type }} unicast
+     vrf {{ vrf.name  }}
+
+      {% if vrf.address_family is defined and  vrf.state is defined and vrf.state == "absent"  %}
+      no address-family {{ vrf.address_family.type }} unicast
       {% else %}
-      address-family {{ bgp_vars.vrf.address_family.type }} unicast
+      address-family {{ vrf.address_family.type }} unicast
       {% endif %}
-      {% if bgp_vars.vrf.router_id is defined %}
-      router-id {{ bgp_vars.vrf.router_id }}
+      {% if vrf.router_id is defined %}
+      router-id {{ vrf.router_id }}
       {% endif %}
-      {% if bgp_vars.vrf.address_family.redistribute is defined %}
-        {% for route in bgp_vars.vrf.address_family.redistribute %}
+      {% if vrf.address_family.redistribute is defined %}
+        {% for route in vrf.address_family.redistribute %}
           {% if route.route_type is defined %}
             {% if route.state is defined and route.state == "absent" %}
               no redistribute {{ route.route_type }}
@@ -763,8 +765,8 @@ router bgp {{ bgp_vars.asn }}
           {% endif %}
         {% endfor %}
       {% endif %}
-      {% if bgp_vars.vrf.neighbor is defined %}
-        {% for ngbr in bgp_vars.vrf.neighbor %}
+      {% if vrf.neighbor is defined %}
+        {% for ngbr in vrf.neighbor %}
             {% if ngbr.interface is defined %}
             neighbor interface {{ ngbr.interface }}
             {% else %}
@@ -784,6 +786,7 @@ router bgp {{ bgp_vars.asn }}
             {% endif %}
         {% endfor %}
       {% endif %}
+    {% endfor %}
     {% endif %}
   {% endif %}
   {% endif %}

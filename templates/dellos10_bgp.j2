@@ -817,6 +817,63 @@ router bgp {{ bgp_vars.asn }}
             no bfd
             {% endif %}
 
+            {% if ngbr.address_family is defined and ngbr.address_family %}
+              {% for af in ngbr.address_family %}
+                {% if af.type is defined and af.type %}
+                  {% if af.state is defined and af.state == "absent" %}                  
+  no address-family {{ af.type }} unicast
+                  {% else %}
+  address-family {{ af.type }} unicast
+                    {% if af.activate is defined %}
+                      {% if af.activate %}
+   activate
+                      {% else %}
+   no activate
+                      {% endif %}
+                    {% endif %}
+                    {% if af.sender_loop_detect is defined %}
+                      {% if af.sender_loop_detect %}
+   sender-side-loop-detection
+                      {% else %}
+   no sender-side-loop-detection
+                      {% endif %}
+                    {% endif %}
+                    {% if af.allow_as_in is defined %}
+                      {% if af.allow_as_in %}
+   allowas-in {{ af.allow_as_in }}
+                      {% else %}
+   no allowas-in
+                      {% endif %}
+                    {% endif %}
+                    {% if af.next_hop_self is defined %}
+                      {% if af.next_hop_self %}
+   next-hop-self
+                      {% else %}
+   no next-hop-self
+                      {% endif %}
+                    {% endif %}
+                    {% if af.soft_reconf is defined %}
+                      {% if af.soft_reconf %}
+   soft-reconfiguration inbound
+                      {% else %}
+   no soft-reconfiguration inbound
+                      {% endif %}
+                    {% endif %}
+                    {% if af.add_path is defined %}
+                      {% if af.add_path %}
+   add-path {{ af.add_path }}
+                      {% else %}
+   no add-path
+                      {% endif %}
+                    {% endif %}
+
+
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+            
+
 
 
             {% if ngbr.admin is defined %}

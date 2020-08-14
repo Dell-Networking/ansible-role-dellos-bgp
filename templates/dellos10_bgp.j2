@@ -775,6 +775,33 @@ router bgp {{ bgp_vars.asn }}
       {% endif %}
       {% endfor %}
       {% endif %}
+
+      {% if vrf.ipv4_network is defined and vrf.ipv4_network %}
+ address-family ipv4 unicast
+      {% for net in vrf.ipv4_network %}
+        {% if net.address is defined and net.address %}
+          {% if net.state is defined and net.state == "absent"%}
+  no network {{ net.address }}
+          {% else %}
+  network {{ net.address }}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% if vrf.ipv6_network is defined and vrf.ipv6_network %}
+ address-family ipv6 unicast
+      {% for net in vrf.ipv6_network %}
+        {% if net.address is defined and net.address %}
+          {% if net.state is defined and net.state == "absent"%}
+  no network {{ net.address }}
+          {% else %}
+  network {{ net.address }}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
       
       {% if vrf.neighbor is defined %}
         {% for ngbr in vrf.neighbor %}

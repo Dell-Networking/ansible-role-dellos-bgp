@@ -778,6 +778,7 @@ router bgp {{ bgp_vars.asn }}
       
       {% if vrf.neighbor is defined %}
         {% for ngbr in vrf.neighbor %}
+        {% if ngbr.type == "ipv4" or ngbr.type =="ipv6" %}
             {% if ngbr.interface is defined %}
             neighbor interface {{ ngbr.interface }}
             {% else %}
@@ -788,7 +789,9 @@ router bgp {{ bgp_vars.asn }}
             {% if ngbr.remote_asn is defined %}
             remote-as {{ ngbr.remote_asn }}
             {% endif %}
-
+        {% elif ngbr.type == "peergroup" %}
+          template {{ ngbr.name }}
+        {% endif %}
             {% if ngbr.bfd is defined and ngbr.bfd %}
             bfd
             {% elif ngbr.bfd is defined and not ngbr.bfd %}

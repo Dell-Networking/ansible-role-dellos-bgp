@@ -852,10 +852,19 @@ router bgp {{ bgp_vars.asn }}
 
 
         {% endif %}
+
             {% if ngbr.bfd is defined and ngbr.bfd %}
             bfd
             {% elif ngbr.bfd is defined and not ngbr.bfd %}
             no bfd
+            {% endif %}
+
+            {% if ngbr.password is defined %}
+              {% if ngbr.password %}
+  password {{ ngbr.password }}
+              {% else %}
+  no password a
+              {% endif %}
             {% endif %}
 
             {% if ngbr.address_family is defined and ngbr.address_family %}

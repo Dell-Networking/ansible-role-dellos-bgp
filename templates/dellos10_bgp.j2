@@ -729,17 +729,24 @@ router bgp {{ bgp_vars.asn }}
     {% for vrf in bgp_vars.vrfs %}
 
      vrf {{ vrf.name  }}
-
-      {% if vrf.address_family is defined and  vrf.state is defined and vrf.state == "absent"  %}
-      no address-family {{ vrf.address_family.type }} unicast
+      
+      {% if vrf.address_family is defined %}
+      {% for afi in vrf.address_family %}
+      {% if vrf.state is defined and vrf.state == "absent"  %}
+      no address-family {{ afi.type }} unicast
       {% else %}
-      address-family {{ vrf.address_family.type }} unicast
+      address-family {{ afi.type }} unicast
+      {% endif %}
+      {% endfor %}
       {% endif %}
       {% if vrf.router_id is defined %}
       router-id {{ vrf.router_id }}
       {% endif %}
-      {% if vrf.address_family.redistribute is defined %}
-        {% for route in vrf.address_family.redistribute %}
+      
+      {% if vrf.address_family is defined %}
+      {% for afi in vrf.address_family %}
+      {% if afi.redistribute is defined %}
+        {% for route in afi.redistribute %}
           {% if route.route_type is defined %}
             {% if route.state is defined and route.state == "absent" %}
               no redistribute {{ route.route_type }}
@@ -765,6 +772,9 @@ router bgp {{ bgp_vars.asn }}
           {% endif %}
         {% endfor %}
       {% endif %}
+      {% endfor %}
+      {% endif %}
+      
       {% if vrf.neighbor is defined %}
         {% for ngbr in vrf.neighbor %}
             {% if ngbr.interface is defined %}

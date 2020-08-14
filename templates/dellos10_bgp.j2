@@ -902,6 +902,13 @@ router bgp {{ bgp_vars.asn }}
    no next-hop-self
                       {% endif %}
                     {% endif %}
+                    {% if af.default_originate is defined %}
+                      {% if af.default_originate %}
+   default-originate
+                      {% else %}
+   no default-originate
+                      {% endif %}
+                    {% endif %}
                     {% if af.soft_reconf is defined %}
                       {% if af.soft_reconf %}
    soft-reconfiguration inbound

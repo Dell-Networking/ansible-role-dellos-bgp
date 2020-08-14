@@ -810,6 +810,20 @@ router bgp {{ bgp_vars.asn }}
 
         {% elif ngbr.type == "peergroup" %}
           template {{ ngbr.name }}
+
+              {% if ngbr.subnet is defined and ngbr.subnet %}
+                {% if ngbr.subnet_state is defined and ngbr.subnet_state =="absent" %}
+  no listen {{ ngbr.subnet }}
+                {% else %}
+                  {% if ngbr.limit is defined and ngbr.limit %}
+  listen {{ ngbr.subnet }} limit {{ ngbr.limit }}
+                  {% else %}
+  listen {{ ngbr.subnet }}
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+
+
         {% endif %}
             {% if ngbr.bfd is defined and ngbr.bfd %}
             bfd

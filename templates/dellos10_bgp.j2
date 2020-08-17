@@ -881,6 +881,21 @@ router bgp {{ bgp_vars.asn }}
    no activate
                       {% endif %}
                     {% endif %}
+
+                    {% if af.route_map is defined and af.route_map %}
+                      {% for item in af.route_map %}
+                        {% if item.name is defined and item.name %}
+                           {% if item.filter is defined and item.filter %}
+                             {%  if item.state is defined and item.state == "absent" %}
+   no route-map {{ item.name }} {{ item.filter }}
+                             {% else %}
+   route-map {{ item.name }} {{ item.filter }}
+                             {% endif%}
+                           {% endif %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
                     {% if af.sender_loop_detect is defined %}
                       {% if af.sender_loop_detect %}
    sender-side-loop-detection

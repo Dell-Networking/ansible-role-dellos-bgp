@@ -838,6 +838,10 @@ router bgp {{ bgp_vars.asn }}
         {% elif ngbr.type == "peergroup" %}
           template {{ ngbr.name }}
 
+            {% if ngbr.remote_asn is defined %}
+            remote-as {{ ngbr.remote_asn }}
+            {% endif %}
+
               {% if ngbr.subnet is defined and ngbr.subnet %}
                 {% if ngbr.subnet_state is defined and ngbr.subnet_state =="absent" %}
   no listen {{ ngbr.subnet }}

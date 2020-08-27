@@ -725,19 +725,29 @@ router bgp {{ bgp_vars.asn }}
         {% endif %}
       {% endif %}
     {% endfor %}
-    {% if bgp_vars.vrf is defined %}
-     vrf {{ bgp_vars.vrf.name  }}
+    {% if bgp_vars.vrfs is defined %}
+    {% for vrf in bgp_vars.vrfs %}
 
-      {% if bgp_vars.vrf.address_family is defined and  bgp_vars.vrf.state is defined and bgp_vars.vrf.state == "absent"  %}
-      no address-family {{ bgp_vars.vrf.address_family.type }} unicast
+     vrf {{ vrf.name  }}
+      
+      {% if vrf.address_family is defined %}
+      {% for afi in vrf.address_family %}
+      {% if afi.state is defined and afi.state == "absent"  %}
+      no address-family {{ afi.type }} unicast
       {% else %}
-      address-family {{ bgp_vars.vrf.address_family.type }} unicast
+      address-family {{ afi.type }} unicast
       {% endif %}
-      {% if bgp_vars.vrf.router_id is defined %}
-      router-id {{ bgp_vars.vrf.router_id }}
+      {% endfor %}
       {% endif %}
-      {% if bgp_vars.vrf.address_family.redistribute is defined %}
-        {% for route in bgp_vars.vrf.address_family.redistribute %}
+      {% if vrf.router_id is defined %}
+      router-id {{ vrf.router_id }}
+      {% endif %}
+      
+      {% if vrf.address_family is defined %}
+      {% for afi in vrf.address_family %}
+      {% if afi.redistribute is defined %}
+      address-family {{ afi.type }} unicast
+        {% for route in afi.redistribute %}
           {% if route.route_type is defined %}
             {% if route.state is defined and route.state == "absent" %}
               no redistribute {{ route.route_type }}
@@ -763,8 +773,50 @@ router bgp {{ bgp_vars.asn }}
           {% endif %}
         {% endfor %}
       {% endif %}
-      {% if bgp_vars.vrf.neighbor is defined %}
-        {% for ngbr in bgp_vars.vrf.neighbor %}
+      {% endfor %}
+      {% endif %}
+
+      {% if vrf.ipv4_network is defined and vrf.ipv4_network %}
+ address-family ipv4 unicast
+      {% for net in vrf.ipv4_network %}
+        {% if net.address is defined and net.address %}
+          {% if net.state is defined and net.state == "absent"%}
+  no network {{ net.address }}
+          {% else %}
+  network {{ net.address }}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% if vrf.ipv6_network is defined and vrf.ipv6_network %}
+ address-family ipv6 unicast
+      {% for net in vrf.ipv6_network %}
+        {% if net.address is defined and net.address %}
+          {% if net.state is defined and net.state == "absent"%}
+  no network {{ net.address }}
+          {% else %}
+  network {{ net.address }}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+      
+      {% if vrf.neighbor is defined %}
+        {% for ngbr in vrf.neighbor %}
+        {% if ngbr.state is defined and ngbr.state == "absent" %}
+            {% if ngbr.interface is defined %}
+              no neighbor interface {{ ngbr.interface }}
+            {% endif %}
+            {% if ngbr.ip is defined %}
+              no neighbor {{ ngbr.ip }}
+            {% endif %}
+            {% if ngbr.name is defined %}
+              no template {{ ngbr.name }}
+            {% endif %}
+        {% else %}
+        {% if ngbr.type == "ipv4" or ngbr.type == "ipv6" %}
             {% if ngbr.interface is defined %}
             neighbor interface {{ ngbr.interface }}
             {% else %}
@@ -775,6 +827,131 @@ router bgp {{ bgp_vars.asn }}
             {% if ngbr.remote_asn is defined %}
             remote-as {{ ngbr.remote_asn }}
             {% endif %}
+
+            {% if ngbr.peergroup is defined and ngbr.peergroup_type is defined %}
+            inherit template {{ ngbr.peergroup }} inherit-type {{ ngbr.peergroup_type }}
+            {% elif ngbr.peergroup is defined %}
+            inherit template {{ ngbr.peergroup }}
+            {% endif %}
+
+
+        {% elif ngbr.type == "peergroup" %}
+          template {{ ngbr.name }}
+
+            {% if ngbr.remote_asn is defined %}
+            remote-as {{ ngbr.remote_asn }}
+            {% endif %}
+
+              {% if ngbr.subnet is defined and ngbr.subnet %}
+                {% if ngbr.subnet_state is defined and ngbr.subnet_state =="absent" %}
+  no listen {{ ngbr.subnet }}
+                {% else %}
+                  {% if ngbr.limit is defined and ngbr.limit %}
+  listen {{ ngbr.subnet }} limit {{ ngbr.limit }}
+                  {% else %}
+  listen {{ ngbr.subnet }}
+                  {% endif %}
+                {% endif %}
+              {% endif %}
+
+
+        {% endif %}
+
+            {% if ngbr.bfd is defined and ngbr.bfd %}
+            bfd
+            {% elif ngbr.bfd is defined and not ngbr.bfd %}
+            no bfd
+            {% endif %}
+
+            {% if ngbr.password is defined %}
+              {% if ngbr.password %}
+  password {{ ngbr.password }}
+              {% else %}
+  no password a
+              {% endif %}
+            {% endif %}
+
+            {% if ngbr.address_family is defined and ngbr.address_family %}
+              {% for af in ngbr.address_family %}
+                {% if af.type is defined and af.type %}
+                  {% if af.state is defined and af.state == "absent" %}                  
+  no address-family {{ af.type }} unicast
+                  {% else %}
+  address-family {{ af.type }} unicast
+                    {% if af.activate is defined %}
+                      {% if af.activate %}
+   activate
+                      {% else %}
+   no activate
+                      {% endif %}
+                    {% endif %}
+
+                    {% if af.route_map is defined and af.route_map %}
+                      {% for item in af.route_map %}
+                        {% if item.name is defined and item.name %}
+                           {% if item.filter is defined and item.filter %}
+                             {%  if item.state is defined and item.state == "absent" %}
+   no route-map {{ item.name }} {{ item.filter }}
+                             {% else %}
+   route-map {{ item.name }} {{ item.filter }}
+                             {% endif%}
+                           {% endif %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                    {% if af.sender_loop_detect is defined %}
+                      {% if af.sender_loop_detect %}
+   sender-side-loop-detection
+                      {% else %}
+   no sender-side-loop-detection
+                      {% endif %}
+                    {% endif %}
+                    {% if af.allow_as_in is defined %}
+                      {% if af.allow_as_in %}
+   allowas-in {{ af.allow_as_in }}
+                      {% else %}
+   no allowas-in
+                      {% endif %}
+                    {% endif %}
+                    {% if af.next_hop_self is defined %}
+                      {% if af.next_hop_self %}
+   next-hop-self
+                      {% else %}
+   no next-hop-self
+                      {% endif %}
+                    {% endif %}
+                    {% if af.default_originate is defined %}
+                      {% if af.default_originate %}
+   default-originate
+                      {% else %}
+   no default-originate
+                      {% endif %}
+                    {% endif %}
+                    {% if af.soft_reconf is defined %}
+                      {% if af.soft_reconf %}
+   soft-reconfiguration inbound
+                      {% else %}
+   no soft-reconfiguration inbound
+                      {% endif %}
+                    {% endif %}
+                    {% if af.add_path is defined %}
+                      {% if af.add_path %}
+   add-path {{ af.add_path }}
+                      {% else %}
+   no add-path
+                      {% endif %}
+                    {% endif %}
+
+
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+            
+
+
+
             {% if ngbr.admin is defined %}
                {%if ngbr.admin == "up" %}
                no shutdown
@@ -782,8 +959,10 @@ router bgp {{ bgp_vars.asn }}
                 shutdown
                {% endif %}
             {% endif %}
+        {% endif %}
         {% endfor %}
       {% endif %}
+    {% endfor %}
     {% endif %}
   {% endif %}
   {% endif %}
